@@ -15,14 +15,11 @@ class Fluent::GoogleCloudStorageOutput < Fluent::TimeSlicedOutput
 
   config_param :service_email, :string
   config_param :service_pkcs12_path, :string
-  config_param :service_pks12_password, :string, :default => "notasecret"
+  config_param :service_pkcs12_password, :string, :default => "notasecret"
   config_param :project_id, :string
   config_param :bucket_id, :string
   config_param :path, :string
 
-  config_param :retry_known_errors, :bool, :default => false
-  config_param :retry_interval, :integer, :default => nil
-  config_param :retry_times, :integer, :default => nil
   config_param :compress, :default => nil do |val|
       unless ["gz", "gzip"].include?(val)
         raise ConfigError, "Unsupported compression algorithm '#{val}'"
@@ -134,7 +131,7 @@ class Fluent::GoogleCloudStorageOutput < Fluent::TimeSlicedOutput
       io = StringIO.new(data)
     end
 
-    media = Google::ApiClient::UploadIO.new(io, content_type, File.basename(path))
+    media = Google::APIClient::UploadIO.new(io, content_type, File.basename(path))
 
     call_google_api(api_method: @storage_api.objects.insert,
                     parameters: {
