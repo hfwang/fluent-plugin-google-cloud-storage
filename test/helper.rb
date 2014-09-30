@@ -22,7 +22,7 @@ unless ENV.has_key?('VERBOSE')
   $log = nulllogger
 end
 
-require 'fluent/plugin/out_webhdfs'
+require 'fluent/plugin/out_google_cloud_storage'
 
 class Test::Unit::TestCase
 end
