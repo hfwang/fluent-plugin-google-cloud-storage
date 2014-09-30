@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    fluent-plugin-google-cloud-storage (0.3.1)
+    fluent-plugin-google-cloud-storage (0.3.2)
       fluent-mixin-config-placeholders (>= 0.3.0)
       fluent-mixin-plaintextformatter (>= 0.2.1)
       fluentd (>= 0.10.53)
