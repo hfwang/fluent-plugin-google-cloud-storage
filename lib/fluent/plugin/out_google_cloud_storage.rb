@@ -86,7 +86,7 @@ class Fluent::GoogleCloudStorageOutput < Fluent::TimeSlicedOutput
         :application_version => "0.3.1")
     begin
       key = Google::APIClient::KeyUtils.load_from_pkcs12(
-        @service_pkcs12_path, @service_pks12_password)
+        @service_pkcs12_path, @service_pkcs12_password)
       @google_api_client.authorization = Signet::OAuth2::Client.new(
           token_credential_uri: "https://accounts.google.com/o/oauth2/token",
           audience: "https://accounts.google.com/o/oauth2/token",
