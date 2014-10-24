@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    fluent-plugin-google-cloud-storage (0.3.2)
+    fluent-plugin-google-cloud-storage (0.3.3)
       fluent-mixin-config-placeholders (>= 0.3.0)
       fluent-mixin-plaintextformatter (>= 0.2.1)
       fluentd (>= 0.10.53)
@@ -49,7 +49,7 @@ GEM
     launchy (2.4.2)
       addressable (~> 2.3)
     ltsv (0.1.0)
-    msgpack (0.5.8)
+    msgpack (0.5.9)
     multi_json (1.10.1)
     multipart-post (2.0.0)
     rake (10.3.2)
