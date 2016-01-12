@@ -2,6 +2,7 @@
 
 require 'fluent/mixin/config_placeholders'
 require 'fluent/mixin/plaintextformatter'
+require 'fluent/log'
 
 class Fluent::GoogleCloudStorageOutput < Fluent::TimeSlicedOutput
   Fluent::Plugin.register_output('google_cloud_storage', self)
@@ -110,7 +111,9 @@ class Fluent::GoogleCloudStorageOutput < Fluent::TimeSlicedOutput
   end
 
   def path_format(chunk_key)
-    Time.strptime(chunk_key, @time_slice_format).strftime(@path)
+    path = Time.strptime(chunk_key, @time_slice_format).strftime(@path)
+    log.debug "GCS Path: #{path}"
+    path
   end
 
   def chunk_unique_id_to_str(unique_id)
