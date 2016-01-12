@@ -45,6 +45,7 @@ class Fluent::GoogleCloudStorageOutput < Fluent::TimeSlicedOutput
     require 'time'
     require 'google/api_client'
     require 'signet/oauth_2/client'
+    require 'mime-types'
   end
 
   # Define `log` method for v0.10.42 or earlier
@@ -118,7 +119,7 @@ class Fluent::GoogleCloudStorageOutput < Fluent::TimeSlicedOutput
   end
 
   def send_data(path, data)
-    content_type = "application/json"
+    mimetype = MIME::Types.type_for(path).first
 
     io = nil
     if ["gz", "gzip"].include?(@compress)
@@ -131,7 +132,7 @@ class Fluent::GoogleCloudStorageOutput < Fluent::TimeSlicedOutput
       io = StringIO.new(data)
     end
 
-    media = Google::APIClient::UploadIO.new(io, content_type, File.basename(path))
+    media = Google::APIClient::UploadIO.new(io, mimetype.content_type, File.basename(path))
 
     call_google_api(api_method: @storage_api.objects.insert,
                     parameters: {
