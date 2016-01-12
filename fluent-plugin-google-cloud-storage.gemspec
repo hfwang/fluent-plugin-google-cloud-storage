@@ -20,4 +20,5 @@ Gem::Specification.new do |gem|
   gem.add_runtime_dependency "fluent-mixin-plaintextformatter", '>= 0.2.1'
   gem.add_runtime_dependency "fluent-mixin-config-placeholders", ">= 0.3.0"
   gem.add_runtime_dependency "google-api-client", '~> 0.7'
+  gem.add_runtime_dependency "mime-types", '>= 3.0'
 end
