@@ -17,9 +17,39 @@ And you can specify output file path as 'path path/to/dir/access.%Y%m%d.log', th
 
 ## Configuration
 
-### GoogleCloudStorageOutput
+### Examples
 
-To store data by time,tag,json (same with 'type file') over WebHDFS:
+#### Complete Example
+
+    # tail
+    <source>
+      type tail
+      format none
+      path /tmp/test.log
+      pos_file /var/log/td-agent/test.pos
+      tag tail.test
+    </source>
+
+    # post to GCS
+    <match tail.test>
+      type google_cloud_storage
+      service_email xxx.xxx.com
+      service_pkcs12_path /etc/td-agent/My_First_Project-xxx.p12
+      project_id handy-compass-xxx
+      bucket_id test_bucket
+      path tail.test/%Y/%m/%d/%H/${hostname}/${chunk_id}.log.gz
+      output_include_time false
+      output_include_tag  false
+      buffer_path /var/log/td-agent/buffer/tail.test
+      # flush_interval 600s
+      buffer_chunk_limit 128m
+      time_slice_wait 300s
+      compress gzip
+    </match>
+
+#### More Examples
+
+To store data by `time,tag,json` (same with 'type file') with GCS:
 
     <match access.**>
       type google_cloud_storage
@@ -27,7 +57,7 @@ To store data by time,tag,json (same with 'type file') over WebHDFS:
       service_pkcs12_path /path/to/key.p12
       project_id name-of-project
       bucket_id name-of-bucket
-      path path/to/access.%Y%m%d_%H.log
+      path path/to/access.%Y%m%d_%H.${chunk_id}.log
     </match>
 
 To specify the pkcs12 file's password, use `service_pkcs12_password`:
@@ -39,7 +69,7 @@ To specify the pkcs12 file's password, use `service_pkcs12_password`:
       service_pkcs12_password SECRET_PASSWORD
       project_id name-of-project
       bucket_id name-of-bucket
-      path path/to/access.%Y%m%d_%H.log
+      path path/to/access.%Y%m%d_%H.${chunk_id}.log
     </match>
 
 If you want JSON object only (without time or tag or both on header of lines), specify it by `output_include_time` or `output_include_tag` (default true):
@@ -50,7 +80,7 @@ If you want JSON object only (without time or tag or both on header of lines), s
       service_pkcs12_path /path/to/key.p12
       project_id name-of-project
       bucket_id name-of-bucket
-      path path/to/access.%Y%m%d_%H.log
+      path path/to/access.%Y%m%d_%H.${chunk_id}.log
       output_include_time false
       output_include_tag  false
     </match>
@@ -88,18 +118,22 @@ To store data compressed (gzip only now):
       compress gzip
     </match>
 
-### Performance notifications
+### Major Caveat
 
 As GCS does not support appending to files, if you have multiple fluentd nodes,
-you most likely want to log to multiple files. You can use '${hostname}' or
+you most likely each to log to separate files. You can use '${hostname}' or
 '${uuid:random}' placeholders in configuration for this purpose.
+
+Note the `${chunk_id}` placeholder in the following paths. The plugin requires the presence
+of the placeholder to guarantee that each flush will not overwrite an existing
+file.
 
 For hostname:
 
     <match access.**>
       type google_cloud_storage
       # ...
-      path log/access/%Y%m%d/${hostname}.log
+      path log/access/%Y%m%d/${hostname}.${chunk_id}.log
     </match>
 
 Or with random filename (to avoid duplicated file name only):
@@ -107,10 +141,11 @@ Or with random filename (to avoid duplicated file name only):
     <match access.**>
       type google_cloud_storage
       # ...
-      path log/access/%Y%m%d/${uuid:random}.log
+      path log/access/%Y%m%d/${uuid:random}.${chunk_id}.log
     </match>
 
-With configurations above, you can handle all of files of '/log/access/20120820/*' as specified timeslice access logs.
+With the configurations above, you can handle all of files of
+'/log/access/20120820/*' as specified timeslice access logs.
 
 ## TODO
 
