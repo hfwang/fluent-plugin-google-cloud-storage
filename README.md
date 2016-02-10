@@ -1,5 +1,7 @@
 # fluent-plugin-google-cloud-storage
 
+[![Gem Version](https://badge.fury.io/rb/fluent-plugin-google-cloud-storage.svg)](https://badge.fury.io/rb/fluent-plugin-google-cloud-storage)
+
 [Fluentd](http://fluentd.org/) output plugin to write data into a [Google Cloud
 Storage](https://cloud.google.com/storage/) bucket.
 
