@@ -37,8 +37,6 @@ class Fluent::GoogleCloudStorageOutput < Fluent::TimeSlicedOutput
 
   config_param :default_tag, :string, :default => 'tag_missing'
 
-  CHUNK_ID_PLACE_HOLDER = '${chunk_id}'
-
   def initialize
     super
     require 'zlib'
@@ -76,10 +74,6 @@ class Fluent::GoogleCloudStorageOutput < Fluent::TimeSlicedOutput
     super
 
     @client = prepare_client()
-
-    if @path.index(CHUNK_ID_PLACE_HOLDER).nil?
-      raise Fluent::ConfigError, "path must contain ${chunk_id}, which is the placeholder for chunk_id, when append is set to false."
-    end
   end
 
   def prepare_client
@@ -117,10 +111,6 @@ class Fluent::GoogleCloudStorageOutput < Fluent::TimeSlicedOutput
     path
   end
 
-  def chunk_unique_id_to_str(unique_id)
-    unique_id.unpack('C*').map{|x| x.to_s(16).rjust(2,'0')}.join('')
-  end
-
   def send_data(path, data)
     mimetype = MIME::Types.type_for(path).first
 
@@ -149,7 +139,7 @@ class Fluent::GoogleCloudStorageOutput < Fluent::TimeSlicedOutput
   end
 
   def write(chunk)
-    hdfs_path = path_format(chunk.key).gsub(CHUNK_ID_PLACE_HOLDER, chunk_unique_id_to_str(chunk.unique_id))
+    hdfs_path = path_format(chunk.key)
 
     send_data(hdfs_path, chunk.read)
 
