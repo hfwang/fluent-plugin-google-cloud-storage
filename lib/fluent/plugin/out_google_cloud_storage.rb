@@ -85,6 +85,7 @@ class Fluent::GoogleCloudStorageOutput < Fluent::TimeSlicedOutput
   def prepare_client
     @google_api_client = Google::APIClient.new(
         :application_name => "fluent-plugin-google-cloud-storage",
+        :user_agent => "fluent-plugin-google-cloud-storage/1.0.0 (gzip)",
         :application_version => "0.3.1")
     begin
       key = Google::APIClient::KeyUtils.load_from_pkcs12(
